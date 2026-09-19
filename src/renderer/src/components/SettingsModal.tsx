@@ -216,7 +216,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Default Quality */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-300">Default Video Quality</label>
@@ -232,6 +232,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <option value="720p">HD (720p)</option>
                 <option value="480p">480p</option>
                 <option value="360p">360p</option>
+                <option value="audio_only">Audio Only (MP3)</option>
               </select>
             </div>
 
@@ -243,11 +244,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onChange={(e) => setFormData({ ...formData, defaultContainer: e.target.value as ContainerOption })}
                 className="w-full bg-darkbg-800 text-slate-100 text-xs font-medium rounded-xl border border-slate-700 p-2.5 focus:outline-none focus:border-rose-500"
               >
-                <option value="mp4">MP4 (Recommended)</option>
-                <option value="mkv">MKV</option>
-                <option value="webm">WEBM</option>
-                <option value="mp3">MP3 (Audio Only)</option>
-                <option value="m4a">M4A (Audio Only)</option>
+                <option value="mp4">MP4 (Recommended Video)</option>
+                <option value="mp3">MP3 (Universal Audio)</option>
+                <option value="m4a">M4A (AAC Audio)</option>
+                <option value="mkv">MKV (Video)</option>
+                <option value="webm">WEBM (Video)</option>
+              </select>
+            </div>
+
+            {/* Default Audio Bitrate */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">Default Audio Bitrate</label>
+              <select
+                value={formData.defaultAudioQuality || 'best'}
+                onChange={(e) => setFormData({ ...formData, defaultAudioQuality: e.target.value as any })}
+                className="w-full bg-darkbg-800 text-slate-100 text-xs font-medium rounded-xl border border-slate-700 p-2.5 focus:outline-none focus:border-rose-500"
+              >
+                <option value="320k">320 kbps (Studio Quality)</option>
+                <option value="256k">256 kbps (High Quality)</option>
+                <option value="192k">192 kbps (Standard Quality)</option>
+                <option value="128k">128 kbps (Compact Size)</option>
+                <option value="best">Best Available Bitrate</option>
               </select>
             </div>
           </div>

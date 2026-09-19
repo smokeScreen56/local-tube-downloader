@@ -11,6 +11,7 @@ import {
   Gauge,
   Timer,
   Play,
+  Music,
 } from 'lucide-react';
 import { DownloadTask } from '../../../shared/types';
 
@@ -123,13 +124,22 @@ export const ActiveDownloads: React.FC<ActiveDownloadsProps> = ({
                     {task.title}
                   </h4>
                   <div className="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
-                    <span className="font-semibold text-rose-400 uppercase">
-                      {task.quality}
-                    </span>
-                    <span>•</span>
-                    <span className="font-semibold text-slate-300 uppercase">
-                      {task.container}
-                    </span>
+                    {task.quality === 'audio_only' || task.container === 'mp3' || task.container === 'm4a' ? (
+                      <span className="flex items-center space-x-1 font-bold text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 rounded text-[10px] uppercase">
+                        <Music className="w-3 h-3 text-amber-400" />
+                        <span>AUDIO ({task.container.toUpperCase()})</span>
+                      </span>
+                    ) : (
+                      <>
+                        <span className="font-semibold text-rose-400 uppercase">
+                          {task.quality}
+                        </span>
+                        <span>•</span>
+                        <span className="font-semibold text-slate-300 uppercase">
+                          {task.container}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

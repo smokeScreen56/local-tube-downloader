@@ -264,9 +264,62 @@ export const App: React.FC = () => {
 
       setTasks((prev) => [newTask, ...prev]);
       setCurrentTab('downloads');
-      showSuccess(metadata.isPlaylist ? `Starting playlist download (${metadata.playlistCount} items)...` : 'Download started.');
+      showSuccess(
+        metadata.isPlaylist
+          ? `Starting playlist ${container === 'mp3' ? 'MP3 ' : ''}download (${metadata.playlistCount} items)...`
+          : container === 'mp3'
+          ? 'Starting MP3 audio extraction (320k)...'
+          : 'Download started.'
+      );
     } catch (err: any) {
       showError(err.message || 'Failed to start download.');
+    }
+  };
+
+  // Instant 1-Click MP3 Download
+  const handleQuickDownloadMp3 = async () => {
+    if (!url.trim() || !metadata) return;
+
+    try {
+      if (!window.api) {
+        throw new Error('Desktop API bridge is not ready.');
+      }
+
+      const res = await window.api.startDownload({
+        url: url.trim(),
+        quality: 'audio_only',
+        container: 'mp3',
+        audioQuality: '320k',
+        downloadPath: downloadPath || settings.defaultDownloadPath,
+        isPlaylist: metadata.isPlaylist,
+        playlistCount: metadata.playlistCount,
+      });
+
+      const newTask: DownloadTask = {
+        id: res.downloadId,
+        url: url.trim(),
+        title: metadata.title,
+        thumbnail: metadata.thumbnail,
+        duration: metadata.duration,
+        quality: 'audio_only',
+        container: 'mp3',
+        downloadPath: downloadPath || settings.defaultDownloadPath,
+        status: 'downloading',
+        progress: 0,
+        speed: 'Extracting audio...',
+        downloadedBytes: 0,
+        totalBytes: 0,
+        eta: '--:--',
+        createdAt: Date.now(),
+        isPlaylist: metadata.isPlaylist,
+        playlistTotal: metadata.playlistCount,
+      };
+
+      setTasks((prev) => [newTask, ...prev]);
+      setCurrentTab('downloads');
+      showSuccess('Downloading 320 kbps MP3 audio...');
+    } catch (err: any) {
+      showError(err.message || 'Failed to start MP3 download.');
     }
   };
 
@@ -589,6 +642,7 @@ export const App: React.FC = () => {
                     downloadPath={downloadPath}
                     onSelectFolder={handleSelectFolder}
                     onStartDownload={handleStartDownload}
+                    onQuickDownloadMp3={handleQuickDownloadMp3}
                     isDownloading={isAnalyzing}
                   />
                 )}

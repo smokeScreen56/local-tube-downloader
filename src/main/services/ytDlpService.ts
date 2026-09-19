@@ -584,9 +584,15 @@ export class YtDlpService {
         }
 
         // Detect destination filename / title
-        const destMatch = cleanLine.match(/\[(?:download|Merger|ExtractAudio)\] Destination:\s*(.+)$/i);
+        const destMatch = cleanLine.match(/\[(?:download|Merger|ExtractAudio|ffmpeg|Fixup[a-zA-Z0-9]+)\] Destination:\s*(.+)$/i);
         if (destMatch && destMatch[1]) {
           downloadedFile = destMatch[1].trim();
+          currentItemTitle = path.basename(downloadedFile);
+        }
+
+        const audioNotConvertingMatch = cleanLine.match(/\[ExtractAudio\] Not converting audio\s+(.+?)\s+because/i);
+        if (audioNotConvertingMatch && audioNotConvertingMatch[1]) {
+          downloadedFile = audioNotConvertingMatch[1].trim();
           currentItemTitle = path.basename(downloadedFile);
         }
 
@@ -668,6 +674,20 @@ export class YtDlpService {
       this.activeProcesses.delete(downloadId);
 
       if (code === 0) {
+        let finalOutputPath = downloadedFile || outputFolder;
+
+        // If audio-only conversion was requested, ensure the path points to the resulting audio file (.mp3 / .m4a)
+        if (isAudioOnly && downloadedFile) {
+          const targetExt = request.container === 'm4a' ? '.m4a' : '.mp3';
+          if (!downloadedFile.toLowerCase().endsWith(targetExt)) {
+            const parsedPath = path.parse(downloadedFile);
+            const candidate = path.join(parsedPath.dir, `${parsedPath.name}${targetExt}`);
+            if (fs.existsSync(candidate)) {
+              finalOutputPath = candidate;
+            }
+          }
+        }
+
         onProgress({
           downloadId,
           status: 'completed',
@@ -678,12 +698,14 @@ export class YtDlpService {
           eta: '00:00',
           statusText: isPlaylist
             ? `All ${playlistTotal} playlist items downloaded successfully!`
+            : isAudioOnly
+            ? 'MP3 audio extracted and downloaded successfully.'
             : 'Download completed successfully.',
           isPlaylist,
           playlistCurrentIndex: playlistTotal,
           playlistTotal,
         });
-        onComplete(downloadedFile || outputFolder);
+        onComplete(finalOutputPath);
       } else {
         const errLower = lastError.toLowerCase();
         let userFriendlyError = 'Download failed. Please try again.';

@@ -9,6 +9,7 @@ import {
   Film,
   Calendar,
   CheckCircle2,
+  Music,
 } from 'lucide-react';
 import { HistoryItem } from '../../../shared/types';
 
@@ -104,12 +105,21 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     {item.title}
                   </h4>
                   <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400 mt-1">
-                    <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold uppercase text-[10px]">
-                      {item.resolution}
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-semibold uppercase text-[10px]">
-                      {item.container}
-                    </span>
+                    {item.resolution === 'AUDIO_ONLY' || item.container === 'MP3' || item.container === 'M4A' ? (
+                      <span className="px-2 py-0.5 rounded bg-gradient-to-r from-amber-500/15 to-rose-500/15 text-amber-300 border border-amber-500/30 font-bold uppercase text-[10px] flex items-center space-x-1">
+                        <Music className="w-3 h-3 text-amber-400" />
+                        <span>{item.container} Audio</span>
+                      </span>
+                    ) : (
+                      <>
+                        <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold uppercase text-[10px]">
+                          {item.resolution}
+                        </span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-semibold uppercase text-[10px]">
+                          {item.container}
+                        </span>
+                      </>
+                    )}
                     <span className="text-slate-500">•</span>
                     <span className="flex items-center space-x-1 text-slate-400">
                       <Calendar className="w-3 h-3 text-slate-500" />

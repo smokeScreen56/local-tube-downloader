@@ -108,6 +108,14 @@ export const VideoPreview: React.FC<VideoPreviewProps> = ({ metadata }) => {
             )}
           </div>
           <div className="flex flex-wrap gap-1.5">
+            {/* Dedicated Audio/MP3 Badge */}
+            <span
+              title="320 kbps high-fidelity audio track extraction available"
+              className="px-2 py-0.5 rounded text-[10px] font-bold border bg-gradient-to-r from-amber-500/15 to-rose-500/15 text-amber-300 border-amber-500/30 flex items-center space-x-1"
+            >
+              <span>🎵 MP3 / M4A (320k)</span>
+            </span>
+
             {metadata.resolutionOptions && metadata.resolutionOptions.length > 0 ? (
               metadata.resolutionOptions
                 .filter((opt) => opt.isDownloadable)
